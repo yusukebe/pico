@@ -1,8 +1,12 @@
 {
   "name": "pico",
   "description": "Ultra-tiny web framework for Web-Standard runtime",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --sourcemap",
