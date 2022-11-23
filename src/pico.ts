@@ -1,6 +1,6 @@
 import type { Handler } from './types'
 
-const METHODS = ['all', 'get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const
+const METHODS = ['all', 'get', 'post', 'put', 'delete', 'head'] as const
 function defineDynamicClass(): {
   new (): {
     [K in typeof METHODS[number]]: (path: string, handler: Handler) => Pico
@@ -18,25 +18,27 @@ class Pico extends defineDynamicClass() {
   constructor() {
     super()
     ;[...METHODS].map((method) => {
-      this[method] = (path: string, handler: Handler) => {
-        const route = {
-          pattern: new URLPattern({
-            pathname: path,
-          }),
-          method: method.toUpperCase(),
-          handler,
-        }
-        this.routes.push(route)
-        return this
-      }
+      this[method] = (path: string, handler: Handler) => this.on(method, path, handler)
     })
   }
 
+  on(method: string, path: string, handler: Handler) {
+    const route = {
+      pattern: new URLPattern({
+        pathname: path,
+      }),
+      method: method.toLowerCase(),
+      handler,
+    }
+    this.routes.push(route)
+    return this
+  }
+
   match(method: string, url: string): { handler: Handler; result: URLPatternURLPatternResult } {
-    method = method.toUpperCase()
+    method = method.toLowerCase()
     for (const route of this.routes) {
       const matched = route.pattern.test(url)
-      if ((matched && route.method === 'ALL') || (matched && route.method === method)) {
+      if ((matched && route.method === 'all') || (matched && route.method === method)) {
         return { handler: route.handler, result: route.pattern.exec(url) }
       }
     }

@@ -50,3 +50,14 @@ describe('All', () => {
     expect(res.status).toBe(200)
   })
 })
+
+describe('on', () => {
+  const app = new Pico()
+  app.on('PURGE', '/cache', () => 'purged')
+
+  it('Should return 200 response with PURGE method', async () => {
+    const req = new Request('http://localhost/cache', { method: 'PURGE' })
+    const res = app.fetch(req)
+    expect(res.status).toBe(200)
+  })
+})
