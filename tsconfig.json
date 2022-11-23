@@ -1,8 +1,20 @@
 {
   "compilerOptions": {
     "target": "ES2020",
+    "declaration": true,
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "lib": [
+      "ESNext"
+    ],
     "types": [
       "@cloudflare/workers-types"
-    ]
-  }
+    ],
+    "rootDir": "./src/",
+    "outDir": "./dist/",
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.test.ts"
+  ],
 }

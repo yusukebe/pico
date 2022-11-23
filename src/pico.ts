@@ -1,4 +1,13 @@
-import { METHODS, Handler, defineDynamicClass } from './types'
+import type { Handler } from './types'
+
+export const METHODS = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const
+export function defineDynamicClass(): {
+  new (): {
+    [K in typeof METHODS[number]]: (path: string, handler: Handler) => Pico
+  }
+} {
+  return class {} as never
+}
 
 class Pico extends defineDynamicClass() {
   routes: {
