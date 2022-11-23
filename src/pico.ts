@@ -47,6 +47,7 @@ class Pico extends defineDynamicClass() {
     const match = this.match(request.method, request.url)
     if (match === undefined) return this.notFound()
     const response = match.handler({ request, ...match.result })
+    if (response instanceof Response) return response
     if (typeof response === 'string') {
       return new Response(response, {
         headers: {
