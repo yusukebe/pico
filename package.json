@@ -3,14 +3,13 @@
   "description": "Ultra-tiny web framework for Web-Standard runtime",
   "version": "0.0.1",
   "types": "dist/index.d.ts",
-  "module": "dist/index.js",
-  "type": "module",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
     "test": "jest",
-    "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --format=esm",
+    "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --format=cjs",
     "build": "rimraf dist && yarn esbuild && yarn tsc",
     "tsc": "tsc --emitDeclarationOnly --declaration",
     "lint": "eslint -c .eslintrc.js src/**.ts",
