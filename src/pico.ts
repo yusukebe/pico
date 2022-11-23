@@ -1,7 +1,7 @@
 import type { Handler } from './types'
 
-export const METHODS = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const
-export function defineDynamicClass(): {
+const METHODS = ['all', 'get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const
+function defineDynamicClass(): {
   new (): {
     [K in typeof METHODS[number]]: (path: string, handler: Handler) => Pico
   }
@@ -23,7 +23,7 @@ class Pico extends defineDynamicClass() {
           pattern: new URLPattern({
             pathname: path,
           }),
-          method: method.toLocaleUpperCase(),
+          method: method.toUpperCase(),
           handler,
         }
         this.routes.push(route)
@@ -35,7 +35,8 @@ class Pico extends defineDynamicClass() {
   match(method: string, url: string): { handler: Handler; result: URLPatternURLPatternResult } {
     method = method.toUpperCase()
     for (const route of this.routes) {
-      if (route.pattern.test(url) && route.method === method) {
+      const matched = route.pattern.test(url)
+      if ((matched && route.method === 'ALL') || (matched && route.method === method)) {
         return { handler: route.handler, result: route.pattern.exec(url) }
       }
     }

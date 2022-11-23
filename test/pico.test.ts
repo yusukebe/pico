@@ -1,6 +1,6 @@
 import { Pico } from '../src/pico'
 
-describe('Test Pico', () => {
+describe('Basic', () => {
   const app = new Pico()
   app.get('/', () => 'Hi')
   app.get('/json', () => ({
@@ -31,5 +31,22 @@ describe('Test Pico', () => {
     const res = app.fetch(req)
     expect(res.status).toBe(404)
     expect(await res.text()).toBe('Custom Not Found')
+  })
+})
+
+describe('All', () => {
+  const app = new Pico()
+  app.all('/abc', () => 'Hi')
+
+  it('Should return 200 response with GET request', async () => {
+    const req = new Request('http://localhost/abc')
+    const res = app.fetch(req)
+    expect(res.status).toBe(200)
+  })
+
+  it('Should return 200 response with POST request', async () => {
+    const req = new Request('http://localhost/abc', { method: 'POST' })
+    const res = app.fetch(req)
+    expect(res.status).toBe(200)
   })
 })
