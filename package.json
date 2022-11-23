@@ -1,5 +1,5 @@
 {
-  "name": "pico",
+  "name": "@picojs/pico",
   "description": "Ultra-tiny web framework for Web-Standard runtime",
   "version": "0.0.0",
   "main": "dist/index.js",
