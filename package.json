@@ -23,6 +23,9 @@
     "type": "git",
     "url": "https://github.com/yusukebe/pico.git"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "homepage": "https://github.com/yusukebe/pico",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20221111.1",
