@@ -1,0 +1,9 @@
+{
+  "name": "pico",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20221111.1"
+  }
+}
