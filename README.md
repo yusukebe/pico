@@ -1,6 +1,6 @@
 # Pico
 
-[![install size](https://packagephobia.com/badge?p=@picojs/pico)](https://packagephobia.com/result?p=@picojs/pico)
+[![size](https://badgen.net/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/package/@picojs/pico) [![size](https://badgen.net/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/package/@picojs/pico)
 
 Pico is ultra-tiny web framework for Web-Standard runtime.
 Pico works on Cloudflare Workers, Deno, Bun, and others.
