@@ -46,7 +46,7 @@ class Pico extends defineDynamicClass() {
 
   notFound = () => new Response('Not Found', { status: 404 })
 
-  fetch(request: Request) {
+  fetch = (request: Request) => {
     const match = this.match(request.method, request.url)
     if (match === undefined) return this.notFound()
     const response = match.handler({ request, ...match.result })
