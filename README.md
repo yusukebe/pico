@@ -1,6 +1,8 @@
 # Pico
 
-[![size](https://badgen.net/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/package/@picojs/pico) [![size](https://badgen.net/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/package/@picojs/pico)
+[![Version](https://img.shields.io/npm/v/@picojs/pico.svg)](https://npmjs.com/package/@picojs/pico)
+[![Bundle Size](https://img.shields.io/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
 
 Pico is ultra-tiny web framework using `URLPattern`.
 Pico works on Cloudflare Workers and Deno.
