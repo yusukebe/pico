@@ -95,7 +95,7 @@ serve(app.fetch)
 ```
 
 ```
-deno run -A pico.ts
+deno run --allow-net pico.ts
 ```
 
 ## Q&A
