@@ -49,7 +49,13 @@ class Pico extends defineDynamicClass() {
   fetch = (request: Request, env?: object, executionContext?: ExecutionContext) => {
     const match = this.match(request.method, request.url)
     if (match === undefined) return this.notFound()
-    const response = match.handler({ request, ...match.result, env, executionContext })
+    const response = match.handler({
+      request,
+      params: match.result.pathname.groups,
+      url: new URL(request.url),
+      env,
+      executionContext,
+    })
     if (response instanceof Response) return response
     if (typeof response === 'string') {
       return new Response(response, {

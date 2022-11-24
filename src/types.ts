@@ -1,6 +1,8 @@
 export type Handler = (context: Context) => Response | string | object
-export type Context = {
+export interface Context {
   request: Request
   env: object
   executionContext: ExecutionContext
-} & URLPatternURLPatternResult
+  params: Record<string, string>
+  get url(): URL
+}

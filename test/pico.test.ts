@@ -36,13 +36,12 @@ describe('Basic', () => {
 
 describe('RegExp', () => {
   const app = new Pico()
-  app.get('/post/:date(\\d+)/:title([a-z]+)', ({ pathname }) => {
-    const { date, title } = pathname.groups
+  app.get('/post/:date(\\d+)/:title([a-z]+)', ({ params }) => {
+    const { date, title } = params
     return { post: { date, title } }
   })
-  app.get('/assets/:filename(.*.png)', ({ pathname }) => {
-    const { filename } = pathname.groups
-    return { filename }
+  app.get('/assets/:filename(.*.png)', ({ params }) => {
+    return params
   })
 
   it('Should capture regexp path parameters', async () => {
@@ -63,6 +62,21 @@ describe('RegExp', () => {
     const res = app.fetch(req)
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ filename: 'animal.png' })
+  })
+})
+
+describe('URL', () => {
+  const app = new Pico()
+  app.get('/search', ({ url }) => {
+    const query = url.searchParams.get('q') || ''
+    return query
+  })
+
+  it('Should get query parameters', async () => {
+    const req = new Request('http://localhost/search?q=foo')
+    const res = app.fetch(req)
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
   })
 })
 
