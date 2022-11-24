@@ -76,7 +76,7 @@ app.get('/secret', ({ env }) => {
 // use executionContext for Cloudflare Workers
 app.get('/log', ({ executionContext, url }) => {
   executionContext.waitUntil(console.log(`You access ${url.toString()}`))
-  return 'log will shown'
+  return 'log will be shown'
 })
 
 // return custom 404 response
