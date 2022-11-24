@@ -28,6 +28,14 @@
     "access": "public"
   },
   "homepage": "https://github.com/yusukebe/pico",
+  "keywords": [
+    "web",
+    "framework",
+    "router",
+    "cloudflare",
+    "workers",
+    "deno"
+  ],
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20221111.1",
     "@types/jest": "^29.2.3",
