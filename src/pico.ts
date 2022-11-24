@@ -44,27 +44,28 @@ class Pico extends defineDynamicClass() {
     }
   }
 
-  notFound = () => new Response('Not Found', { status: 404 })
+  res = (body?: BodyInit, init?: ResponseInit) => new Response(body, init)
 
   fetch = (request: Request, env?: object, executionContext?: ExecutionContext) => {
     const match = this.match(request.method, request.url)
-    if (match === undefined) return this.notFound()
+    if (match === undefined) return this.res('Not Found', { status: 404 })
     const response = match.handler({
       request,
       params: match.result.pathname.groups,
       url: new URL(request.url),
       env,
       executionContext,
+      res: this.res,
     })
     if (response instanceof Response) return response
     if (typeof response === 'string') {
-      return new Response(response, {
+      return this.res(response, {
         headers: {
           'Content-Type': 'text/plain; charset="utf-8"',
         },
       })
     } else if (typeof response === 'object') {
-      return new Response(JSON.stringify(response), {
+      return this.res(JSON.stringify(response), {
         headers: {
           'Content-Type': 'application/json',
         },

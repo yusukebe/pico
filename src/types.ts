@@ -5,4 +5,5 @@ export interface Context {
   executionContext: ExecutionContext
   params: Record<string, string>
   get url(): URL
+  res: (body?: BodyInit, init?: ResponseInit) => Response
 }

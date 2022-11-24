@@ -43,6 +43,9 @@ app.post('/entry/:id', ({ params }) => {
   }
 })
 
+// use `res` function to create Response object
+app.get('/money', ({ res }) => res('Payment required', { status: 402 }))
+
 // capture the parameters with RegExp
 app.get('/post/:date(\\d+)/:title([a-z]+)', ({ params }) => {
   const { date, title } = params
@@ -55,8 +58,8 @@ app.get('/search', ({ url }) => {
 })
 
 // handle the PURGE method and return Redirect response
-app.on('PURGE', '/cache', () => {
-  return new Response(null, {
+app.on('PURGE', '/cache', ({ res }) => {
+  return res(null, {
     status: 302,
     headers: {
       Location: '/',
