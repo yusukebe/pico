@@ -106,6 +106,14 @@ deno run --allow-net pico.ts
 
 Hono is ultra-fast, Pico is ultra-tiny.
 
+> Which should I use?
+
+In most cases, it is better to use Hono.
+Hono is not so fat. The minified bundle size is about 15kB.
+Hono has all things what you can do.
+So, if you have an application that just returns Response object,
+or if you really need to reduce the file size, you can use Pico.
+
 ## Related projects
 
 - Hono <https://honojs.dev>
