@@ -64,6 +64,19 @@ app.on('PURGE', '/cache', () => {
   })
 })
 
+
+// get environment variables for Cloudflare Workers
+app.get('/secret', ({ env }) => {
+  console.log(env.TOKEN)
+  return 'Welcome!'
+})
+
+// use executionContext for Cloudflare Workers
+app.get('/log', ({ executionContext, url }) => {
+  executionContext.waitUntil(console.log(`You access ${url.toString()}`))
+  return 'log will shown'
+})
+
 // return custom 404 response
 app.all('*', () => new Response('Custom 404', { status: 404 })
 
