@@ -36,23 +36,22 @@ const app = new Pico()
 app.get('/', () => 'Hello Pico!')
 
 // capture the path parameter and return JSON response
-app.post('/entry/:id', ({ pathname }) => {
-  const { id } = pathname.groups
+app.post('/entry/:id', ({ params }) => {
+  const { id } = params
   return {
     'your id is': id,
   }
 })
 
 // capture the parameters with RegExp
-app.get('/post/:date(\\d+)/:title([a-z]+)', ({ pathname }) => {
-  const { date, title } = pathname.groups
+app.get('/post/:date(\\d+)/:title([a-z]+)', ({ params }) => {
+  const { date, title } = params
   return { post: { date, title } }
 })
 
 // get the query parameter
-app.get('/search', ({ search }) => {
-  const params = new URLSearchParams(search.input)
-  return `Your query is ${params.get('q')}`
+app.get('/search', ({ url }) => {
+  return `Your query is ${url.searchParams.get('q')}`
 })
 
 // handle the PURGE method and return Redirect response
