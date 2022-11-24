@@ -37,9 +37,9 @@ class Pico extends defineDynamicClass() {
   match(method: string, url: string): { handler: Handler; result: URLPatternURLPatternResult } {
     method = method.toLowerCase()
     for (const route of this.routes) {
-      const matched = route.pattern.test(url)
-      if ((matched && route.method === 'all') || (matched && route.method === method)) {
-        return { handler: route.handler, result: route.pattern.exec(url) }
+      const match = route.pattern.exec(url)
+      if ((match && route.method === 'all') || (match && route.method === method)) {
+        return { handler: route.handler, result: match }
       }
     }
   }
