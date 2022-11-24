@@ -1,7 +1,7 @@
 {
   "name": "@picojs/pico",
   "description": "Ultra-tiny web framework for Cloudflare Workers and Deno",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "files": [
