@@ -6,8 +6,8 @@ describe('Basic', () => {
   app.get('/json', () => ({
     message: 'hello',
   }))
-  app.get('*', () => {
-    return new Response('Custom Not Found', {
+  app.get('*', ({ res }) => {
+    return res('Custom Not Found', {
       status: 404,
     })
   })
