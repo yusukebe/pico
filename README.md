@@ -64,7 +64,6 @@ app.on('PURGE', '/cache', () => {
   })
 })
 
-
 // get environment variables for Cloudflare Workers
 app.get('/secret', ({ env }) => {
   console.log(env.TOKEN)
