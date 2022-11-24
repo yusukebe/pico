@@ -2,8 +2,8 @@
 
 [![size](https://badgen.net/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/package/@picojs/pico) [![size](https://badgen.net/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/package/@picojs/pico)
 
-Pico is ultra-tiny web framework for Web-Standard runtime.
-Pico works on Cloudflare Workers, Deno, Bun, and others.
+Pico is ultra-tiny web framework using `URLPattern`.
+Pico works on Cloudflare Workers and Deno.
 
 ## Install
 
@@ -75,10 +75,6 @@ wrangler dev index.ts
 ```
 wrangler publish index.ts
 ```
-
-## Bun
-
-Now, Pico does not work on Bun because URLPattern may not be implemented yet.
 
 ## Deno
 
