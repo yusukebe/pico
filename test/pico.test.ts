@@ -34,6 +34,38 @@ describe('Basic', () => {
   })
 })
 
+describe('RegExp', () => {
+  const app = new Pico()
+  app.get('/post/:date(\\d+)/:title([a-z]+)', ({ pathname }) => {
+    const { date, title } = pathname.groups
+    return { post: { date, title } }
+  })
+  app.get('/assets/:filename(.*.png)', ({ pathname }) => {
+    const { filename } = pathname.groups
+    return { filename }
+  })
+
+  it('Should capture regexp path parameters', async () => {
+    const req = new Request('http://localhost/post/20221124/hello')
+    const res = app.fetch(req)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ post: { date: '20221124', title: 'hello' } })
+  })
+
+  it('Should return 404 response', async () => {
+    const req = new Request('http://localhost/post/onetwothree/hello')
+    const res = app.fetch(req)
+    expect(res.status).toBe(404)
+  })
+
+  it('Should capture the path parameter with the wildcard', async () => {
+    const req = new Request('http://localhost/assets/animal.png')
+    const res = app.fetch(req)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ filename: 'animal.png' })
+  })
+})
+
 describe('All', () => {
   const app = new Pico()
   app.all('/abc', () => 'Hi')

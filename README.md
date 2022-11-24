@@ -41,6 +41,12 @@ app.post('/entry/:id', ({ pathname }) => {
   }
 })
 
+// capture the parameters with RegExp
+app.get('/post/:date(\\d+)/:title([a-z]+)', ({ pathname }) => {
+  const { date, title } = pathname.groups
+  return { post: { date, title } }
+})
+
 // get the query parameter
 app.get('/search', ({ search }) => {
   const params = new URLSearchParams(search.input)
