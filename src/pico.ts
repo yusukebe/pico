@@ -10,7 +10,7 @@ function defineDynamicClass(): {
 }
 
 class Pico extends defineDynamicClass() {
-  routes: {
+  private routes: {
     pattern: URLPattern
     method: string
     handler: Handler
@@ -22,7 +22,7 @@ class Pico extends defineDynamicClass() {
     })
   }
 
-  on(method: string, path: string, handler: Handler) {
+  on = (method: string, path: string, handler: Handler) => {
     const route = {
       pattern: new URLPattern({
         pathname: path,
@@ -34,7 +34,10 @@ class Pico extends defineDynamicClass() {
     return this
   }
 
-  match(method: string, url: string): { handler: Handler; result: URLPatternURLPatternResult } {
+  private match(
+    method: string,
+    url: string
+  ): { handler: Handler; result: URLPatternURLPatternResult } {
     method = method.toLowerCase()
     for (const route of this.routes) {
       const match = route.pattern.exec(url)
@@ -44,7 +47,7 @@ class Pico extends defineDynamicClass() {
     }
   }
 
-  res = (body?: BodyInit, init?: ResponseInit) => new Response(body, init)
+  private res = (body?: BodyInit, init?: ResponseInit) => new Response(body, init)
 
   fetch = (request: Request, env?: object, executionContext?: ExecutionContext) => {
     const match = this.match(request.method, request.url)
