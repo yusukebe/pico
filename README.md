@@ -4,8 +4,11 @@
 [![Bundle Size](https://img.shields.io/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
 
-Pico is ultra-tiny web framework using `URLPattern`.
+Pico is ultra-tiny (about 1kB) web framework using `URLPattern`.
 Pico works on Cloudflare Workers and Deno.
+Pico is compatible with [Hono](https://honojs.dev).
+
+**This project is still experimental. The API might be changed.**
 
 ## Install
 
@@ -33,33 +36,33 @@ import { Pico } from '@picojs/pico'
 const app = new Pico()
 
 // handle GET request and return TEXT response
-app.get('/', () => 'Hello Pico!')
+app.get('/', (c) => c.text('Hello Pico!'))
 
 // capture the path parameter and return JSON response
-app.post('/entry/:id', ({ params }) => {
-  const { id } = params
-  return {
+app.post('/entry/:id', (c) => {
+  const id = c.req.param('id')
+  return c.json({
     'your id is': id,
-  }
+  })
 })
 
 // use `res` function to create Response object
-app.get('/money', ({ res }) => res('Payment required', { status: 402 }))
+app.get('/money', () => new Response('Payment required', { status: 402 }))
 
 // capture the parameters with RegExp
-app.get('/post/:date(\\d+)/:title([a-z]+)', ({ params }) => {
-  const { date, title } = params
-  return { post: { date, title } }
+app.get('/post/:date(\\d+)/:title([a-z]+)', (c) => {
+  const { date, title } = c.req.param()
+  return c.json({ post: { date, title } })
 })
 
 // get the query parameter
-app.get('/search', ({ url }) => {
-  return `Your query is ${url.searchParams.get('q')}`
+app.get('/search', (c) => {
+  return c.text(`Your query is ${c.req.query('q')}`)
 })
 
 // handle the PURGE method and return Redirect response
-app.on('PURGE', '/cache', ({ res }) => {
-  return res(null, {
+app.on('PURGE', '/cache', () => {
+  return new Response(null, {
     status: 302,
     headers: {
       Location: '/',
@@ -68,15 +71,15 @@ app.on('PURGE', '/cache', ({ res }) => {
 })
 
 // get environment variables for Cloudflare Workers
-app.get('/secret', ({ env }) => {
-  console.log(env.TOKEN)
-  return 'Welcome!'
+app.get('/secret', (c) => {
+  console.log(c.env.TOKEN)
+  return c.text('Welcome!')
 })
 
 // use executionContext for Cloudflare Workers
-app.get('/log', ({ executionContext, url }) => {
-  executionContext.waitUntil(console.log(`You access ${url.toString()}`))
-  return 'log will be shown'
+app.get('/log', (c) => {
+  c.executionContext.waitUntil(console.log(`You access ${c.req.url.toString()}`))
+  return c.text('log will be shown')
 })
 
 // return custom 404 response
@@ -114,13 +117,38 @@ serve(app.fetch)
 deno run --allow-net pico.ts
 ```
 
-## Q&A
+## Migrate to Hono
 
-> What's the difference from Hono?
+Just rewrite
+
+```ts
+import { Pico } from '@picojs/pico'
+
+const app = new Pico()
+```
+
+To
+
+```ts
+import { Hono } from 'hono'
+
+const app = new Hono()
+```
+
+## What's the difference from Hono?
 
 Hono is ultra-fast, Pico is ultra-tiny.
 
-> Which should I use?
+And several things are different.
+
+- Pico does not support all API of Hono.
+- Pico does not run on anywhere. Does not run on Bun.
+- Pico does not support Middleware.
+- Pico's router is not so fast. Hono's routers are ultrafast.
+- Pico supports TypeScript, but Hono's TypeScript experience is more rich.
+- The syntax for writing routing such as RegExp one is different.
+
+### Which should I use?
 
 In most cases, it is better to use Hono.
 Hono is not so fat. The minified bundle size is about 15kB.

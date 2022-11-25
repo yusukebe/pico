@@ -9,7 +9,7 @@ function defineDynamicClass(): {
   return class {} as never
 }
 
-class Pico extends defineDynamicClass() {
+export class Pico extends defineDynamicClass() {
   private r: {
     pattern: URLPattern
     method: string
@@ -47,35 +47,30 @@ class Pico extends defineDynamicClass() {
     }
   }
 
-  private res = (body?: BodyInit, init?: ResponseInit) => new Response(body, init)
+  fetch = (req: Request, env?: object, executionContext?: ExecutionContext) => {
+    const match = this.match(req.method, req.url)
+    if (match === undefined) return new Response('Not Found', { status: 404 })
 
-  fetch = (request: Request, env?: object, executionContext?: ExecutionContext) => {
-    const match = this.match(request.method, request.url)
-    if (match === undefined) return this.res('Not Found', { status: 404 })
+    Request.prototype.param = function (this: Request, key?: string) {
+      const groups = match.result.pathname.groups
+      if (key) return groups[key]
+      return groups
+    } as InstanceType<typeof Request>['param']
+    req.query = (key) => new URLSearchParams(match.result.search.input).get(key)
+    req.header = (key) => req.headers.get(key)
+
     const response = match.handler({
-      request,
-      params: match.result.pathname.groups,
-      url: new URL(request.url),
+      req,
       env,
       executionContext,
-      res: this.res,
+      text: (text) => new Response(text),
+      json: (json) =>
+        new Response(JSON.stringify(json), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }),
     })
-    if (response instanceof Response) return response
-    if (typeof response === 'string') {
-      return this.res(response, {
-        headers: {
-          'Content-Type': 'text/plain; charset="utf-8"',
-        },
-      })
-    } else if (typeof response === 'object') {
-      return this.res(JSON.stringify(response), {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-    }
     return response
   }
 }
-
-export { Pico }
