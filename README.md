@@ -108,7 +108,7 @@ import { serve } from 'https://deno.land/std/http/server.ts'
 import { Pico } from 'https://esm.sh/@picojs/pico'
 
 const app = new Pico()
-app.get('/', () => 'Hi Deno!')
+app.get('/', (c) => c.text('Hi Deno!'))
 
 serve(app.fetch)
 ```
