@@ -1,9 +1,23 @@
-export type Handler = (context: Context) => Response | string | object
+export type Handler = (context: Context) => Response | Promise<Response>
 export interface Context {
-  request: Request
+  req: Request
   env: Record<string, any>
   executionContext: ExecutionContext
-  params: Record<string, string>
-  get url(): URL
-  res: (body?: BodyInit, init?: ResponseInit) => Response
+  text: (text: string) => Response
+  json: (json: object) => Response
+}
+
+declare global {
+  interface Request {
+    param: {
+      (key: string): string
+      (): Record<string, string>
+    }
+    query: {
+      (key: string): string
+    }
+    header: {
+      (name: string): string
+    }
+  }
 }
