@@ -46,7 +46,7 @@ app.post('/entry/:id', (c) => {
   })
 })
 
-// use `res` function to create Response object
+// return the primitive Response object
 app.get('/money', () => new Response('Payment required', { status: 402 }))
 
 // capture the parameters with RegExp
