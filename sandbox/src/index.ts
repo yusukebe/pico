@@ -1,35 +1,4 @@
-# Pico
-
-[![Version](https://img.shields.io/npm/v/@picojs/pico.svg)](https://npmjs.com/package/@picojs/pico)
-[![Bundle Size](https://img.shields.io/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
-
-Pico is an ultra-tiny (~400B) router using `URLPattern`.
-Pico works on Cloudflare Workers and Deno.
-
-**This project is still experimental. The API might be changed.**
-
-## Install
-
-```
-npm i @picojs/pico
-// Or
-yarn add @picojs/pico
-```
-
-Install `@cloudflare/workers-types` for supporting the types.
-
-```
-npm i -D @cloudflare/workers-types
-// Or
-yarn add -D @cloudflare/workers-types
-```
-
-## Example
-
-```ts
-// index.ts
-import { Pico } from '@picojs/pico'
+import { Pico } from '../../src'
 
 // create a router object, `new` is not needed
 const router = Pico()
@@ -87,45 +56,3 @@ router.all('*', () => new Response('Custom 404', { status: 404 }))
 
 // export the app for Cloudflare Workers
 export default router
-```
-
-## Develop with Wrangler
-
-```
-wrangler dev index.ts
-```
-
-## Deploy to Cloudflare Workers
-
-```
-wrangler publish index.ts
-```
-
-## Deno
-
-```ts
-import { serve } from 'https://deno.land/std/http/server.ts'
-import { Pico } from 'https://esm.sh/@picojs/pico'
-
-const router = Pico()
-router.get('/', () => new Response('Hi Deno!'))
-
-serve(app.fetch)
-```
-
-```
-deno run --allow-net pico.ts
-```
-
-## Related projects
-
-- Hono <https://hono.dev>
-- itty-router <https://github.com/kwhitley/itty-router>
-
-## Author
-
-Yusuke Wada <https://github.com/yusukebe>
-
-## License
-
-MIT

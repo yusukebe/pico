@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --format=esm --sourcemap",
+    "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --format=esm --tsconfig=tsconfig.build.json",
     "build": "rimraf dist && yarn esbuild && yarn tsc",
     "tsc": "tsc --emitDeclarationOnly --declaration",
     "lint": "eslint -c .eslintrc.js src/**.ts",
