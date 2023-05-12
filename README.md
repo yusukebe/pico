@@ -4,7 +4,7 @@
 [![Bundle Size](https://img.shields.io/bundlephobia/min/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/@picojs/pico)](https://bundlephobia.com/result?p=@picojs/pico)
 
-Pico is an ultra-tiny (~400B) router using `URLPattern`.
+Pico is an ultra-tiny (~400 bytes) router using `URLPattern`.
 Pico works on Cloudflare Workers and Deno.
 
 **This project is still experimental. The API might be changed.**
