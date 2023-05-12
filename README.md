@@ -110,7 +110,9 @@ import { Pico } from 'https://esm.sh/@picojs/pico'
 const router = Pico()
 router.get('/', () => new Response('Hi Deno!'))
 
-serve(app.fetch)
+//...
+
+serve(router.fetch)
 ```
 
 ```
