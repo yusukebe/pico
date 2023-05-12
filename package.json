@@ -1,7 +1,7 @@
 {
   "name": "@picojs/pico",
   "description": "Ultra-tiny router for Cloudflare Workers and Deno",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "type": "module",
