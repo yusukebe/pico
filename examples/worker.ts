@@ -1,12 +1,14 @@
 import { Pico } from '../src/index'
 
-const app = new Pico()
+const router = Pico()
 
-app.get('/', (c) => c.text('Hello Pico!'))
-app.get('/entry/:id', (c) => {
-  const id = c.req.param('id')
-  return c.json({ 'your id is': id })
+router.get('/', () => new Response('Hello Pico!'))
+router.get('/entry/:id', ({ result }) => {
+  const { id } = result.pathname.groups
+  return Response.json({ 'your id is': id })
 })
-app.get('/money', () => new Response('Payment required', { status: 402 }))
+router.get('/money', () => new Response('Payment required', { status: 402 }))
 
-export default app
+router.all('*', () => new Response('Not Found', { status: 404 }))
+
+export default router

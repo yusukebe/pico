@@ -1,23 +1,39 @@
-export type Handler = (context: Context) => Response | Promise<Response>
-export interface Context {
+export type Handler = (c: C) => Response | Promise<Response>
+
+export type C = {
   req: Request
-  env: Record<string, any>
+  env: {}
   executionContext: ExecutionContext
-  text: (text: string) => Response
-  json: (json: object) => Response
+  result: URLPatternURLPatternResult
 }
 
-declare global {
-  interface Request {
-    param: {
-      (key: string): string
-      (): Record<string, string>
-    }
-    query: {
-      (key: string): string
-    }
-    header: {
-      (name: string): string
-    }
-  }
+export type Route = {
+  p: URLPattern
+  m: string
+  h: Handler
+}
+
+export type Fetch = (
+  req: Request,
+  env?: {},
+  executionContext?: ExecutionContext
+) => Response | Promise<Response>
+
+export type PicoType = {
+  routes: Route[]
+  fetch: Fetch
+  on: (method: string, path: string, handler: Handler) => void
+} & Methods
+
+type MethodHandler = (path: string, handler: Handler) => PicoType
+
+type Methods = {
+  all: MethodHandler
+  get: MethodHandler
+  put: MethodHandler
+  post: MethodHandler
+  delete: MethodHandler
+  head: MethodHandler
+  patch: MethodHandler
+  option: MethodHandler
 }

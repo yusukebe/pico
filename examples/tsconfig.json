@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "types": [
+      "@cloudflare/workers-types",
+    ],
+  },
+  "include": [
+    "*.ts",
+  ],
+}
