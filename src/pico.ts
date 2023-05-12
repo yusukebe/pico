@@ -1,76 +1,50 @@
-import type { Handler } from './types'
+import type { PicoType, Route, Fetch, Handler } from './types'
 
-const METHODS = ['all', 'get', 'post', 'put', 'delete', 'head'] as const
-function defineDynamicClass(): {
-  new (): {
-    [K in typeof METHODS[number]]: (path: string, handler: Handler) => Pico
-  }
-} {
-  return class {} as never
-}
-
-export class Pico extends defineDynamicClass() {
-  private r: {
-    pattern: URLPattern
-    method: string
-    handler: Handler
-  }[] = []
-  constructor() {
-    super()
-    ;[...METHODS].map((method) => {
-      this[method] = (path: string, handler: Handler) => this.on(method, path, handler)
-    })
-  }
-
-  on = (method: string, path: string, handler: Handler) => {
-    const route = {
-      pattern: new URLPattern({
-        pathname: path,
-      }),
-      method: method.toLowerCase(),
-      handler,
-    }
-    this.r.push(route)
-    return this
-  }
-
-  private match(
-    method: string,
-    url: string
-  ): { handler: Handler; result: URLPatternURLPatternResult } {
-    method = method.toLowerCase()
-    for (const route of this.r) {
-      const match = route.pattern.exec(url)
-      if ((match && route.method === 'all') || (match && route.method === method)) {
-        return { handler: route.handler, result: match }
+export const Pico = (): PicoType => {
+  const routes: Route[] = []
+  const f: {
+    fetch: Fetch
+    on: (method: string, path: string, handler: Handler) => void
+  } = {
+    fetch: (req, env, executionContext) => {
+      const m = req.method
+      for (const route of routes) {
+        const result = route.p.exec(req.url)
+        if ((result && route.m === 'ALL') || (result && route.m === m)) {
+          return route.h({
+            req,
+            env,
+            executionContext,
+            result,
+          })
+        }
       }
-    }
-  }
-
-  fetch = (req: Request, env?: object, executionContext?: ExecutionContext) => {
-    const match = this.match(req.method, req.url)
-    if (match === undefined) return new Response('Not Found', { status: 404 })
-
-    Request.prototype.param = function (this: Request, key?: string) {
-      const groups = match.result.pathname.groups
-      if (key) return groups[key]
-      return groups
-    } as InstanceType<typeof Request>['param']
-    req.query = (key) => new URLSearchParams(match.result.search.input).get(key)
-    req.header = (key) => req.headers.get(key)
-
-    const response = match.handler({
-      req,
-      env,
-      executionContext,
-      text: (text) => new Response(text),
-      json: (json) =>
-        new Response(JSON.stringify(json), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+    },
+    on: (method, path, handler) => {
+      routes.push({
+        p: new URLPattern({
+          pathname: path,
         }),
-    })
-    return response
+        m: method.toUpperCase(),
+        h: handler,
+      })
+    },
   }
+  const p = new Proxy({} as PicoType, {
+    get:
+      (_, prop: string, receiver) =>
+      (...args: unknown[]) => {
+        if (prop === 'fetch' || prop === 'on') {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return f[prop](...args)
+        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        f['on'](prop, ...args)
+        return receiver
+      },
+  })
+
+  return p as PicoType
 }

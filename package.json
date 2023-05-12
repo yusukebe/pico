@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --format=esm --sourcemap",
+    "esbuild": "esbuild --bundle --minify ./src/index.ts --outdir=./dist --format=esm --tsconfig=tsconfig.build.json",
     "build": "rimraf dist && yarn esbuild && yarn tsc",
     "tsc": "tsc --emitDeclarationOnly --declaration",
     "lint": "eslint -c .eslintrc.js src/**.ts",
@@ -37,7 +37,7 @@
     "deno"
   ],
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20221111.1",
+    "@cloudflare/workers-types": "^4.20230419.0",
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
