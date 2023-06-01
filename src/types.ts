@@ -1,8 +1,12 @@
 export type Handler = (c: C) => Response | Promise<Response>
 
+declare global {
+  interface Env {}
+}
+
 export type C = {
   req: Request
-  env: {}
+  env: Env
   executionContext: ExecutionContext
   result: URLPatternURLPatternResult
 }
@@ -15,7 +19,7 @@ export type Route = {
 
 export type Fetch = (
   req: Request,
-  env?: {},
+  env?: Env,
   executionContext?: ExecutionContext
 ) => Response | Promise<Response>
 
