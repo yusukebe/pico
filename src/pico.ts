@@ -8,16 +8,16 @@ export const Pico = (): PicoType => {
   } = {
     fetch: (req, env, executionContext) => {
       const m = req.method
-      for (const route of routes) {
+      for (let i = 0, len = routes.length; i < len; i++) {
+        const route = routes[i]
         const result = route.p.exec(req.url)
-        if ((result && route.m === 'ALL') || (result && route.m === m)) {
+        if ((result && route.m === 'ALL') || (result && route.m === m))
           return route.h({
             req,
             env,
             executionContext,
             result,
           })
-        }
       }
     },
     on: (method, path, handler) => {
