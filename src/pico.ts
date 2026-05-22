@@ -10,14 +10,14 @@ export const Pico = (): PicoType => {
       const m = req.method
       for (let i = 0, len = routes.length; i < len; i++) {
         const route = routes[i]
+        if (route.m !== m && route.m !== 'ALL') continue
         const result = route.p.exec(req.url)
-        if ((result && route.m === 'ALL') || (result && route.m === m))
-          return route.h({
-            req,
-            env,
-            executionContext,
-            result,
-          })
+        if (result) return route.h({
+          req,
+          env,
+          executionContext,
+          result,
+        })
       }
     },
     on: (method, path, handler) => {
