@@ -9,7 +9,7 @@ const json = (data: unknown) =>
 
 describe('Basic', () => {
   const router = Pico()
-  router.get('/', () => new Response('Hi'))
+  router.get('/', () => new Response('Hi', { headers: { 'content-type': 'text/plain' } }))
   router.get('/json', () =>
     json({
       message: 'hello',
