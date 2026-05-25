@@ -1,21 +1,19 @@
 import type { PicoType } from './types'
 
-export const Pico = (): PicoType => {
-  const f = {
-    routes: [],
-    fetch(req, env, ctx) {
-      for (const route of f.routes) {
-        if (route.m !== req.method && route.m !== 'ALL') continue
-        const result = route.p.exec(req.url)
-        if (result) return route.h({ req, env, ctx, result })
-      }
-    },
-    on(method, pathname, handler) {
-      f.routes.push({ p: new URLPattern({ pathname }), m: method.toUpperCase(), h: handler })
-    },
-  } as Pick<PicoType, 'routes' | 'fetch' | 'on'> as PicoType
-  ;(['all', 'get', 'put', 'post', 'delete', 'head', 'patch', 'options'] as const).map(
-    (m) => (f[m] = (...args) => (f.on(m, ...args), f))
+export const Pico = <env extends object>(): PicoType<env> =>
+  new Proxy(
+    {
+      routes: [],
+      fetch(req, env, ctx) {
+        for (const [pattern, method, handler] of this.routes) {
+          const result = (method === 'ALL' || method === req.method) && pattern.exec(req.url)
+          if (result) return handler(req, result, env, ctx)
+        }
+      },
+      on(method, pathname, handler) {
+        this.routes.push([new URLPattern({ pathname }), method.toUpperCase(), handler])
+      },
+    } as Pick<PicoType<env>, 'routes' | 'fetch' | 'on'> as PicoType<env>,
+    // @ts-expect-error
+    { get: (t, p, s) => t[p] || ((...a) => (t.on(p, ...a), s)) }
   )
-  return f
-}

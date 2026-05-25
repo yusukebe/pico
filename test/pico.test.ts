@@ -49,7 +49,7 @@ describe('Basic', () => {
 
 describe('RegExp', () => {
   const router = Pico()
-  router.get('/post/:date(\\d+)/:title([a-z]+)', ({ result }) => {
+  router.get('/post/:date(\\d+)/:title([a-z]+)', (_, result) => {
     const { date, title } = result.pathname.groups
     return json({
       post: {
@@ -59,8 +59,8 @@ describe('RegExp', () => {
     })
   })
 
-  router.get('/assets/:filename(.*.png)', (c) => {
-    const filename = c.result.pathname.groups['filename']
+  router.get('/assets/:filename(.*.png)', (_, result) => {
+    const filename = result.pathname.groups.filename
     return json({ filename })
   })
 
@@ -89,7 +89,7 @@ describe('RegExp', () => {
 
 describe('Query', () => {
   const app = Pico()
-  app.get('/search', ({ result }) => {
+  app.get('/search', (_, result) => {
     const query = new URLSearchParams(result.search.input).get('q')
     return new Response(query)
   })
