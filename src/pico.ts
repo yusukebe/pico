@@ -1,50 +1,19 @@
-import type { PicoType, Route, Fetch, Handler } from './types'
+import type { PicoType } from './types'
 
-export const Pico = (): PicoType => {
-  const routes: Route[] = []
-  const f: {
-    fetch: Fetch
-    on: (method: string, path: string, handler: Handler) => void
-  } = {
-    fetch: (req, env, executionContext) => {
-      const m = req.method
-      for (let i = 0, len = routes.length; i < len; i++) {
-        const route = routes[i]
-        if (route.m !== m && route.m !== 'ALL') continue
-        const result = route.p.exec(req.url)
-        if (result) return route.h({
-          req,
-          env,
-          executionContext,
-          result,
-        })
-      }
-    },
-    on: (method, path, handler) => {
-      routes.push({
-        p: new URLPattern({
-          pathname: path,
-        }),
-        m: method.toUpperCase(),
-        h: handler,
-      })
-    },
-  }
-  const p = new Proxy({} as PicoType, {
-    get:
-      (_, prop: string, receiver) =>
-      (...args: unknown[]) => {
-        if (prop === 'fetch' || prop === 'on') {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          return f[prop](...args)
+export const Pico = <env extends object>(): PicoType<env> =>
+  new Proxy(
+    {
+      routes: [],
+      fetch(req, env, ctx) {
+        for (const [pattern, method, handler] of this.routes) {
+          const result = (method === 'ALL' || method === req.method) && pattern.exec(req.url)
+          if (result) return handler(req, result, env, ctx)
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        f['on'](prop, ...args)
-        return receiver
       },
-  })
-
-  return p as PicoType
-}
+      on(method, pathname, handler) {
+        this.routes.push([new URLPattern({ pathname }), method.toUpperCase(), handler])
+      },
+    } as Pick<PicoType<env>, 'routes' | 'fetch' | 'on'> as PicoType<env>,
+    // @ts-expect-error
+    { get: (t, p, s) => t[p] || ((...a) => (t.on(p, ...a), s)) }
+  )

@@ -1,39 +1,17 @@
-export type Handler = (c: C) => Response | Promise<Response>
-
-export type C = {
-  req: Request
-  env: {}
-  executionContext: ExecutionContext
-  result: URLPatternURLPatternResult
-}
-
-export type Route = {
-  p: URLPattern
-  m: string
-  h: Handler
-}
-
-export type Fetch = (
+type Handler<env extends object = {}> = (
   req: Request,
-  env?: {},
-  executionContext?: ExecutionContext
+  result: URLPatternURLPatternResult,
+  env?: env,
+  ctx?: ExecutionContext
 ) => Response | Promise<Response>
 
-export type PicoType = {
-  routes: Route[]
-  fetch: Fetch
-  on: (method: string, path: string, handler: Handler) => void
-} & Methods
-
-type MethodHandler = (path: string, handler: Handler) => PicoType
-
-type Methods = {
-  all: MethodHandler
-  get: MethodHandler
-  put: MethodHandler
-  post: MethodHandler
-  delete: MethodHandler
-  head: MethodHandler
-  patch: MethodHandler
-  option: MethodHandler
+export interface PicoType<env extends object = {}> extends Methods<env> {
+  routes: [p: URLPattern, m: string, h: Handler<env>][]
+  fetch: (req: Request, env?: env, ctx?: ExecutionContext) => Response | Promise<Response>
+  on: (method: string, pathname: string, handler: Handler<env>) => void
 }
+
+type Methods<env extends object> = Record<
+  'all' | 'get' | 'put' | 'post' | 'delete' | 'head' | 'patch' | 'options',
+  (path: string, handler: Handler<env>) => PicoType<env>
+>
