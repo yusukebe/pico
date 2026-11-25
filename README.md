@@ -76,9 +76,9 @@ router.get('/secret', ({ env }) => {
   return new Response('Welcome!')
 })
 
-// use an executionContext for Cloudflare Workers
-router.get('/log', ({ executionContext, req }) => {
-  executionContext.waitUntil((async () => console.log(`You access ${req.url.toString()}`))())
+// use the execution context (`ctx`) for Cloudflare Workers
+router.get('/log', ({ ctx, req }) => {
+  ctx.waitUntil((async () => console.log(`You access ${req.url.toString()}`))())
   return new Response('log will be shown')
 })
 

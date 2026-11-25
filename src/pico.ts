@@ -1,50 +1,23 @@
-import type { PicoType, Route, Fetch, Handler } from './types'
+import type { Handler, PicoType } from './types'
 
-export const Pico = (): PicoType => {
-  const routes: Route[] = []
-  const f: {
-    fetch: Fetch
-    on: (method: string, path: string, handler: Handler) => void
-  } = {
-    fetch: (req, env, executionContext) => {
-      const m = req.method
-      for (let i = 0, len = routes.length; i < len; i++) {
-        const route = routes[i]
-        if (route.m !== m && route.m !== 'ALL') continue
-        const result = route.p.exec(req.url)
-        if (result) return route.h({
-          req,
-          env,
-          executionContext,
-          result,
-        })
-      }
-    },
-    on: (method, path, handler) => {
-      routes.push({
-        p: new URLPattern({
-          pathname: path,
-        }),
-        m: method.toUpperCase(),
-        h: handler,
-      })
-    },
-  }
-  const p = new Proxy({} as PicoType, {
-    get:
-      (_, prop: string, receiver) =>
-      (...args: unknown[]) => {
-        if (prop === 'fetch' || prop === 'on') {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          return f[prop](...args)
-        }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        f['on'](prop, ...args)
-        return receiver
+export const Pico: () => PicoType = (routes: [URLPattern, string, Handler][] = []) =>
+  new Proxy(
+    {
+      fetch: (req, env, ctx) => {
+        // `req.method` is a native getter: read it once per request, not once per route
+        const method = req.method
+        let result
+        for (const route of routes)
+          if ((route[1] == 'ALL' || route[1] == method) && (result = route[0].exec(req.url)))
+            return route[2]({ req, env, ctx, result })
       },
-  })
-
-  return p as PicoType
-}
+      on: (method, pathname, handler) => {
+        routes.push([new URLPattern({ pathname }), method.toUpperCase(), handler])
+      },
+    } as PicoType,
+    {
+      // `fetch` and `on` are returned as-is; any other property is an HTTP method
+      get: (target, prop: keyof PicoType, receiver) =>
+        target[prop] || ((...args: [string, Handler]) => (target.on(prop, ...args), receiver)),
+    }
+  )
