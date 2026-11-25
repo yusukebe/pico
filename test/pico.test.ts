@@ -139,21 +139,21 @@ describe('Context', () => {
     json({ keys: Object.keys(c).sort(), id: c.result.pathname.groups.id })
   )
 
-  it('Should pass req, env, executionContext and result to the handler', async () => {
+  it('Should pass req, env, ctx and result to the handler', async () => {
     const env = { TOKEN: 'secret' }
-    const executionContext = { waitUntil: () => {}, passThroughOnException: () => {} }
+    const ctx = { waitUntil: () => {}, passThroughOnException: () => {} }
     let received: unknown[] = []
     router.get('/args', (c) => {
-      received = [c.req, c.env, c.executionContext]
+      received = [c.req, c.env, c.ctx]
       return new Response('ok')
     })
     const req = new Request('http://localhost/args')
-    await router.fetch(req, env, executionContext as unknown as ExecutionContext)
-    expect(received).toEqual([req, env, executionContext])
+    await router.fetch(req, env, ctx as unknown as ExecutionContext)
+    expect(received).toEqual([req, env, ctx])
 
     const res = await router.fetch(new Request('http://localhost/ctx/123'))
     expect(await res.json()).toEqual({
-      keys: ['env', 'executionContext', 'req', 'result'],
+      keys: ['ctx', 'env', 'req', 'result'],
       id: '123',
     })
   })

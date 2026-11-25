@@ -3,7 +3,7 @@ export type Handler = (c: C) => Response | Promise<Response>
 export type C = {
   req: Request
   env: {}
-  executionContext: ExecutionContext
+  ctx: ExecutionContext
   result: URLPatternURLPatternResult
 }
 
@@ -13,11 +13,7 @@ export type Route = {
   h: Handler
 }
 
-export type Fetch = (
-  req: Request,
-  env?: {},
-  executionContext?: ExecutionContext
-) => Response | Promise<Response>
+export type Fetch = (req: Request, env?: {}, ctx?: ExecutionContext) => Response | Promise<Response>
 
 export type PicoType = {
   routes: Route[]
