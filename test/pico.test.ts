@@ -132,3 +132,64 @@ describe('on', () => {
     expect(res.status).toBe(200)
   })
 })
+
+describe('Context', () => {
+  const router = Pico()
+  router.get('/ctx/:id', (c) =>
+    json({ keys: Object.keys(c).sort(), id: c.result.pathname.groups.id })
+  )
+
+  it('Should pass req, env, executionContext and result to the handler', async () => {
+    const env = { TOKEN: 'secret' }
+    const executionContext = { waitUntil: () => {}, passThroughOnException: () => {} }
+    let received: unknown[] = []
+    router.get('/args', (c) => {
+      received = [c.req, c.env, c.executionContext]
+      return new Response('ok')
+    })
+    const req = new Request('http://localhost/args')
+    await router.fetch(req, env, executionContext as unknown as ExecutionContext)
+    expect(received).toEqual([req, env, executionContext])
+
+    const res = await router.fetch(new Request('http://localhost/ctx/123'))
+    expect(await res.json()).toEqual({
+      keys: ['env', 'executionContext', 'req', 'result'],
+      id: '123',
+    })
+  })
+})
+
+describe('Chaining and order', () => {
+  const router = Pico()
+    .get('/a', () => new Response('first'))
+    .get('/a', () => new Response('second'))
+    .post('/a', () => new Response('post'))
+    .all('*', () => new Response('fallback'))
+
+  it('Should return the first registered matching route', async () => {
+    const res = await router.fetch(new Request('http://localhost/a'))
+    expect(await res.text()).toBe('first')
+  })
+
+  it('Should skip routes registered for another method', async () => {
+    const res = await router.fetch(new Request('http://localhost/a', { method: 'POST' }))
+    expect(await res.text()).toBe('post')
+  })
+
+  it('Should fall through to `all`', async () => {
+    const res = await router.fetch(new Request('http://localhost/a', { method: 'DELETE' }))
+    expect(await res.text()).toBe('fallback')
+  })
+})
+
+describe('Detached fetch', () => {
+  const router = Pico()
+  router.get('/', () => new Response('Hi'))
+
+  it('Should work when `fetch` is passed by reference, e.g. `serve(router.fetch)`', async () => {
+    const { fetch } = router
+    const res = await fetch(new Request('http://localhost'))
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('Hi')
+  })
+})
